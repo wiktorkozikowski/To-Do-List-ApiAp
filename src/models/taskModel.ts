@@ -44,9 +44,6 @@ class TaskModel {
     return newTask;
   }
 
-  /**
-   * Aktualizuje istniejące zadanie
-   */
   updateTask(id: number, taskData: UpdateTaskDTO): Task | null {
     const existingTask = this.getTaskById(id);
     if (!existingTask) return null;
