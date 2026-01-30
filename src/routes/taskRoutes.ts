@@ -39,7 +39,7 @@ router.delete('/:id', taskController.deleteTask.bind(taskController));
 
 /**
  * PATCH /api/tasks/:id/status
- * Zmienia status zadania (completed, cancelled, pending)
+ * Zmienia status zadania 
  */
 router.patch('/:id/status', taskController.changeTaskStatus.bind(taskController));
 
