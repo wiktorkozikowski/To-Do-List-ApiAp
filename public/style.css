@@ -1,0 +1,315 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #363946;
+    min-height: 100vh;
+    padding: 40px 20px;
+    user-select: none;
+}
+
+.view {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #2d2d30;
+    border-radius: 16px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.hidden { display: none; }
+
+h1 {
+    font-size: 2.5rem;
+    color: #e0e0e0;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+.plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* Przyciski */
+button, .back-btn, .delete-plan-btn, .delete-btn, .task-delete, .cancel-btn {
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 8px 14px;
+}
+
+button {
+    padding: 14px 28px;
+    background: #667eea;
+    color: #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.back-btn {
+    background: #667eea;
+    color: #e0e0e0;
+    font-size: 1rem;
+    padding: 8px;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.delete-plan-btn, .delete-btn, .task-delete {
+    background: #f44336;
+    color: #e0e0e0;
+    transition: background 0.2s;
+}
+
+.delete-plan-btn:hover, .delete-btn:hover, .task-delete:hover {
+    background: #da190b;
+}
+
+.cancel-btn {
+    background: #ffc107;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.cancel-btn:hover { background: #ffb300; }
+
+/* Formularze */
+.create-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.task-create {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-create-row-1 {
+    display: flex;
+    gap: 10px;
+}
+
+.task-create-row-1 input { flex: 1; }
+
+.task-create-row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+input[type="text"], input[type="date"], input[type="number"] {
+    background: #1e1e1e;
+    border: 2px solid #3e3e42;
+    color: #e0e0e0;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: 14px 18px;
+    font-size: 1rem;
+}
+
+input[type="date"], input[type="number"] {
+    padding: 12px 14px;
+    font-size: 0.95rem;
+}
+
+input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+    border-color: #667eea;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"] { -moz-appearance: textfield; }
+
+/* Listy i karty */
+.plans-list, .tasks-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.plans-list { gap: 15px; }
+.tasks-list { gap: 12px; }
+
+.plan-card, .task-item {
+    background: #3e3e42;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.plan-card {
+    padding: 24px;
+    border-radius: 12px;
+    border-left: 5px solid #667eea;
+}
+
+.plan-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+    background: #4a4a4f;
+}
+
+.plan-card h3 {
+    font-size: 1.4rem;
+    color: #e0e0e0;
+    margin: 0;
+    font-weight: 600;
+}
+
+.task-item {
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 4px solid #667eea;
+}
+
+.task-item:hover {
+    transform: translateX(3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    background: #4a4a4f;
+}
+
+.task-item input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+    accent-color: #667eea;
+}
+
+.task-item span, .task-title {
+    color: #e0e0e0;
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.task-item span { flex: 1; }
+
+/* Status zadań */
+.task-item.completed {
+    opacity: 0.6;
+    border-left-color: #28a745;
+}
+
+.task-item.completed span {
+    text-decoration: line-through;
+}
+
+.task-item.cancelled {
+    opacity: 0.5;
+    border-left-color: #ffc107;
+}
+
+.task-item.cancelled span {
+    text-decoration: line-through;
+    color: #999;
+}
+
+.task-item.cancelled .info-badge { text-decoration: none; }
+.task-item.completed .info-badge { text-decoration: none; }
+.task-item.completed .cancel-btn { display: none; }
+
+/* Puste stany */
+.no-tasks, .no-plans {
+    text-align: center;
+    padding: 20px;
+    color: #e0e0e0;
+    font-style: italic;
+}
+
+/* Badgi i liczniki */
+.task-counters, .task-info-badges {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.task-counters { margin-top: 12px; }
+.task-info-badges { 
+    gap: 8px;
+    align-items: center;
+}
+
+.task-count-badge, .completed-count-badge, .cancelled-count-badge, .info-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #e0e0e0;
+}
+
+.task-count-badge { background: #667eea; }
+.completed-count-badge { background: #28a745; }
+.cancelled-count-badge { 
+    background: #ffc107;
+    color: #333;
+}
+
+.info-badge {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deadline-badge {
+    background: #3a7e37;
+    padding: 6px 20px;
+    white-space: nowrap;
+}
+
+.time-badge {
+    background: #825ce9;
+    padding: 6px 14px;
+}
+
+.task-content { flex: 1; }
+
+.task-meta {
+    margin-top: 6px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #bdbdbd;
+    font-size: 0.85rem;
+}
+
+/* Media queries */
+@media (max-width: 600px) {
+    body { padding: 20px 10px; }
+    .view { padding: 30px 20px; }
+    h1 { font-size: 2rem; }
+    .create-section { flex-direction: column; }
+    .task-create-row-2 { grid-template-columns: 1fr; }
+}
