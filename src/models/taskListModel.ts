@@ -8,38 +8,39 @@ class TaskListModel {
   /**
    * Pobiera wszystkie listy zadań
    */
-  getAllLists(): TaskList[] {
-    const sql = 'SELECT * FROM task_lists ORDER BY created_at DESC';
-    const rows = db.prepare(sql).all() as TaskListRow[];
+  getAllLists(userId: number): TaskList[] {
+    const sql = 'SELECT * FROM task_lists WHERE user_id = ? ORDER BY created_at DESC';
+    const rows = db.prepare(sql).all(userId) as TaskListRow[];
     return rows;
   }
 
   /**
    * Pobiera pojedynczą listę po ID
    */
-  getListById(id: number): TaskList | null {
-    const sql = 'SELECT * FROM task_lists WHERE id = ?';
-    const row = db.prepare(sql).get(id) as TaskListRow | undefined;
+  getListById(id: number, userId: number): TaskList | null {
+    const sql = 'SELECT * FROM task_lists WHERE id = ? AND user_id = ?';
+    const row = db.prepare(sql).get(id, userId) as TaskListRow | undefined;
     return row || null;
   }
 
   /**
    * Tworzy nową listę zadań
    */
-  createList(listData: CreateTaskListDTO): TaskList {
+  createList(listData: CreateTaskListDTO, userId: number): TaskList {
     const sql = `
-      INSERT INTO task_lists (name, description, created_at)
-      VALUES (?, ?, ?)
+      INSERT INTO task_lists (name, description, created_at, user_id)
+      VALUES (?, ?, ?, ?)
     `;
     
     const createdAt = new Date().toISOString();
     const info = db.prepare(sql).run(
       listData.name,
       listData.description || null,
-      createdAt
+      createdAt,
+      userId
     );
 
-    const newList = this.getListById(info.lastInsertRowid as number);
+    const newList = this.getListById(info.lastInsertRowid as number, userId);
     if (!newList) {
       throw new Error('Błąd tworzenia listy');
     }
@@ -50,8 +51,8 @@ class TaskListModel {
   /**
    * Aktualizuje istniejącą listę
    */
-  updateList(id: number, listData: UpdateTaskListDTO): TaskList | null {
-    const existingList = this.getListById(id);
+  updateList(id: number, userId: number, listData: UpdateTaskListDTO): TaskList | null {
+    const existingList = this.getListById(id, userId);
     if (!existingList) {
       return null;
     }
@@ -73,19 +74,19 @@ class TaskListModel {
       return existingList;
     }
 
-    values.push(id);
-    const sql = `UPDATE task_lists SET ${updates.join(', ')} WHERE id = ?`;
+    values.push(id, userId);
+    const sql = `UPDATE task_lists SET ${updates.join(', ')} WHERE id = ? AND user_id = ?`;
     
     db.prepare(sql).run(...values);
-    return this.getListById(id);
+    return this.getListById(id, userId);
   }
 
   /**
-   * Usuwa listę (CASCADE usunie też wszystkie zadania w liście)
+   * Usuwa listę 
    */
-  deleteList(id: number): boolean {
-    const sql = 'DELETE FROM task_lists WHERE id = ?';
-    const info = db.prepare(sql).run(id);
+  deleteList(id: number, userId: number): boolean {
+    const sql = 'DELETE FROM task_lists WHERE id = ? AND user_id = ?';
+    const info = db.prepare(sql).run(id, userId);
     return info.changes > 0;
   }
 

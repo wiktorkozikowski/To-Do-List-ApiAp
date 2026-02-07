@@ -45,6 +45,16 @@ npm start
 
 ## API Endpoints
 
+### Autoryzacja (sesje)
+```
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET /api/auth/me
+```
+
+Wszystkie endpointy `/api/lists` i `/api/tasks` wymagają zalogowania.
+
 ### Pobierz wszystkie zadania
 ```
 GET /api/tasks
@@ -78,6 +88,19 @@ Content-Type: application/json
 DELETE /api/tasks/:id
 ```
 
+## Użytkownicy i własność danych
+
+Listy i zadania są przypisane do zalogowanego użytkownika (pole `user_id`).
+Po włączeniu logowania stare listy bez `user_id` mogą być niewidoczne, dopóki nie zostaną przypisane do konta.
+
+## Frontend
+
+Prosty frontend dostępny pod adresem `http://localhost:3000`.
+
+- `login.html` — logowanie
+- `register.html` — rejestracja
+- `index.html` — lista planów i zadań (po zalogowaniu)
+
 ## Kody odpowiedzi HTTP
 
 - **200 OK** - Żądanie zakończone sukcesem
@@ -86,8 +109,8 @@ DELETE /api/tasks/:id
 - **404 Not Found** - Zasób nie został znaleziony
 - **500 Internal Server Error** - Błąd serwera
 
-## Frontend
-
-Prosty frontend dostępny pod adresem `http://localhost:3000`
-
 Służy wyłącznie do wizualnej prezentacji działania API.
+
+## Konfiguracja
+
+Ustaw zmienną środowiskową `SESSION_SECRET` dla sesji (szczególnie na produkcji).

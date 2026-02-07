@@ -12,9 +12,9 @@ class TaskListController {
    */
   getAllLists(req: Request, res: Response): void {
     try {
-      const lists = taskListModel.getAllLists();
+      const userId = req.session.userId as number;
+      const lists = taskListModel.getAllLists(userId);
       
-      // Dodaj licznik zadań dla każdej listy
       const listsWithCount = lists.map(list => ({
         ...list,
         taskCount: taskListModel.getTaskCount(list.id),
@@ -42,6 +42,7 @@ class TaskListController {
    */
   getListById(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       if (isNaN(id)) {
@@ -52,7 +53,7 @@ class TaskListController {
         return;
       }
 
-      const list = taskListModel.getListById(id);
+      const list = taskListModel.getListById(id, userId);
 
       if (!list) {
         res.status(404).json({
@@ -84,6 +85,7 @@ class TaskListController {
    */
   createList(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const { name, description } = req.body as CreateTaskListDTO;
 
       if (!name || name.trim() === '') {
@@ -107,7 +109,7 @@ class TaskListController {
         description: description?.trim() || undefined
       };
 
-      const newList = taskListModel.createList(listData);
+      const newList = taskListModel.createList(listData, userId);
 
       res.status(201).json({
         success: true,
@@ -129,6 +131,7 @@ class TaskListController {
    */
   updateList(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       if (isNaN(id)) {
@@ -169,7 +172,7 @@ class TaskListController {
       if (name !== undefined) listData.name = name.trim();
       if (description !== undefined) listData.description = description.trim();
 
-      const updatedList = taskListModel.updateList(id, listData);
+      const updatedList = taskListModel.updateList(id, userId, listData);
 
       if (!updatedList) {
         res.status(404).json({
@@ -195,10 +198,11 @@ class TaskListController {
 
   /**
    * DELETE /api/lists/:id
-   * Usuwa listę (i wszystkie zadania w niej)
+   * Usuwa listę 
    */
   deleteList(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       if (isNaN(id)) {
@@ -209,7 +213,7 @@ class TaskListController {
         return;
       }
 
-      const deleted = taskListModel.deleteList(id);
+      const deleted = taskListModel.deleteList(id, userId);
 
       if (!deleted) {
         res.status(404).json({

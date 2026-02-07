@@ -8,11 +8,21 @@ db.pragma('foreign_keys = ON');
 
 export function initializeDatabase(): void {
   const createTablesSQL = `
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      login TEXT NOT NULL UNIQUE,
+      password_hash TEXT NOT NULL,
+      created_at TEXT NOT NULL
+    );
+
     CREATE TABLE IF NOT EXISTS task_lists (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
       name TEXT NOT NULL,
       description TEXT,
-      created_at TEXT NOT NULL
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS tasks (
@@ -30,14 +40,14 @@ export function initializeDatabase(): void {
 
   try {
     db.exec(createTablesSQL);
+    try { db.exec('ALTER TABLE task_lists ADD COLUMN user_id INTEGER;'); } catch {}
     try { db.exec('ALTER TABLE tasks ADD COLUMN deadline TEXT;'); } catch {}
     try { db.exec('ALTER TABLE tasks ADD COLUMN estimated_time REAL;'); } catch {}
-    console.log('✅ Baza danych zainicjalizowana pomyślnie');
+    console.log(' Baza danych zainicjalizowana pomyślnie');
   } catch (error) {
-    console.error('❌ Błąd inicjalizacji bazy danych:', error);
+    console.error(' Błąd inicjalizacji bazy danych:', error);
     throw error;
   }
 }
 
-// Export instancji bazy danych
 export default db;

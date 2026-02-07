@@ -1,6 +1,7 @@
 // Typy dla listy zadań (TaskList)
 export interface TaskList {
   id: number;
+  user_id: number;
   name: string;
   description: string | null;
   created_at: string;
@@ -21,6 +22,7 @@ export interface UpdateTaskListDTO {
 // Typ dla surowych danych z bazy
 export interface TaskListRow {
   id: number;
+  user_id: number;
   name: string;
   description: string | null;
   created_at: string;
