@@ -13,6 +13,7 @@ const planView = document.getElementById('planView');
 const planNameInput = document.getElementById('planNameInput');
 const createPlanBtn = document.getElementById('createPlanBtn');
 const plansList = document.getElementById('plansList');
+const logoutBtn = document.getElementById('logoutBtn');
 
 // Widok planu
 const backBtn = document.getElementById('backBtn');
@@ -38,6 +39,20 @@ function showPlanView(planId) {
     currentPlanId = planId;
     loadPlanDetails(planId);
     loadTasks(planId);
+}
+
+async function checkAuth() {
+    try {
+        const response = await fetch(`${API_URL}/auth/me`);
+        if (response.ok) {
+            showHomeView();
+            return;
+        }
+    } catch (error) {
+        console.error('Błąd auth:', error);
+    }
+
+    window.location.href = 'login.html';
 }
 
 // ========== PLANY - CRUD ==========
@@ -102,6 +117,16 @@ async function createPlan() {
         console.error('Błąd:', error);
         alert(error.message);
     }
+}
+
+async function logout() {
+    try {
+        await fetch(`${API_URL}/auth/logout`, { method: 'POST' });
+    } catch (error) {
+        console.error('Błąd:', error);
+    }
+
+    window.location.href = 'login.html';
 }
 
 async function deletePlan() {
@@ -292,6 +317,8 @@ planNameInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') createPlan();
 });
 
+logoutBtn.addEventListener('click', logout);
+
 backBtn.addEventListener('click', showHomeView);
 deletePlanBtn.addEventListener('click', deletePlan);
 
@@ -302,5 +329,5 @@ taskNameInput.addEventListener('keypress', (e) => {
 
 // ========== INICJALIZACJA ==========
 document.addEventListener('DOMContentLoaded', () => {
-    showHomeView();
+    checkAuth();
 });

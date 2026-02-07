@@ -1,10 +1,12 @@
 import { Request, Response } from 'express';
 import taskModel from '../models/taskModel';
+import taskListModel from '../models/taskListModel';
 import { CreateTaskDTO, UpdateTaskDTO } from '../types/task';
 
 class TaskController {
   getAllTasks(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const listId = req.query.list_id ? parseInt(req.query.list_id as string) : undefined;
 
       if (listId !== undefined && isNaN(listId)) {
@@ -12,7 +14,15 @@ class TaskController {
         return;
       }
 
-      const tasks = taskModel.getAllTasks(listId);
+      if (listId !== undefined) {
+        const list = taskListModel.getListById(listId, userId);
+        if (!list) {
+          res.status(404).json({ success: false, error: 'List not found' });
+          return;
+        }
+      }
+
+      const tasks = taskModel.getAllTasksForUser(userId, listId);
       res.json({ success: true, data: tasks, count: tasks.length });
     } catch (error) {
       console.error('Get tasks error:', error);
@@ -22,6 +32,7 @@ class TaskController {
 
   getTaskById(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       if (isNaN(id)) {
@@ -29,7 +40,7 @@ class TaskController {
         return;
       }
 
-      const task = taskModel.getTaskById(id);
+      const task = taskModel.getTaskByIdForUser(userId, id);
       if (!task) {
         res.status(404).json({ success: false, error: 'Task not found' });
         return;
@@ -44,6 +55,7 @@ class TaskController {
 
   createTask(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const { title, description, list_id, deadline, estimated_time } = req.body as CreateTaskDTO;
 
       if (!title || title.trim() === '') {
@@ -56,10 +68,21 @@ class TaskController {
         return;
       }
 
+      if (!list_id) {
+        res.status(400).json({ success: false, error: 'List ID required' });
+        return;
+      }
+
+      const list = taskListModel.getListById(list_id, userId);
+      if (!list) {
+        res.status(404).json({ success: false, error: 'List not found' });
+        return;
+      }
+
       const taskData: CreateTaskDTO = {
         title: title.trim(),
         description: description?.trim() || undefined,
-        list_id: list_id || undefined,
+        list_id,
         deadline: deadline?.trim() || undefined,
         estimated_time: estimated_time ?? undefined
       };
@@ -78,6 +101,7 @@ class TaskController {
    */
   updateTask(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       // Walidacja ID
@@ -117,6 +141,15 @@ class TaskController {
         return;
       }
 
+      const existingTask = taskModel.getTaskByIdForUser(userId, id);
+      if (!existingTask) {
+        res.status(404).json({
+          success: false,
+          error: 'Zadanie nie zostało znalezione'
+        });
+        return;
+      }
+
       const taskData: UpdateTaskDTO = {};
       if (title !== undefined) taskData.title = title.trim();
       if (description !== undefined) taskData.description = description.trim();
@@ -152,6 +185,7 @@ class TaskController {
    */
   deleteTask(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
 
       // Walidacja ID
@@ -159,6 +193,15 @@ class TaskController {
         res.status(400).json({
           success: false,
           error: 'Nieprawidłowe ID zadania'
+        });
+        return;
+      }
+
+      const existingTask = taskModel.getTaskByIdForUser(userId, id);
+      if (!existingTask) {
+        res.status(404).json({
+          success: false,
+          error: 'Zadanie nie zostało znalezione'
         });
         return;
       }
@@ -192,6 +235,7 @@ class TaskController {
    */
   changeTaskStatus(req: Request, res: Response): void {
     try {
+      const userId = req.session.userId as number;
       const id = parseInt(req.params.id);
       const { status } = req.body;
 
@@ -209,6 +253,15 @@ class TaskController {
         res.status(400).json({
           success: false,
           error: 'Status musi być: pending, completed lub cancelled'
+        });
+        return;
+      }
+
+      const existingTask = taskModel.getTaskByIdForUser(userId, id);
+      if (!existingTask) {
+        res.status(404).json({
+          success: false,
+          error: 'Zadanie nie zostało znalezione'
         });
         return;
       }
@@ -238,5 +291,4 @@ class TaskController {
   }
 }
 
-// Eksport pojedynczej instancji
 export default new TaskController();

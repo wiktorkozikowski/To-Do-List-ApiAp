@@ -2,18 +2,36 @@ import db from '../database/database';
 import { Task, CreateTaskDTO, UpdateTaskDTO, TaskRow, TaskStatus } from '../types/task';
 
 class TaskModel {
-  getAllTasks(listId?: number): Task[] {
-    let sql = 'SELECT * FROM tasks';
+  getAllTasksForUser(userId: number, listId?: number): Task[] {
+    let sql = `
+      SELECT tasks.*
+      FROM tasks
+      JOIN task_lists ON task_lists.id = tasks.list_id
+      WHERE task_lists.user_id = ?
+    `;
     const params: any[] = [];
 
+    params.push(userId);
+
     if (listId !== undefined) {
-      sql += ' WHERE list_id = ?';
+      sql += ' AND tasks.list_id = ?';
       params.push(listId);
     }
 
-    sql += ' ORDER BY created_at DESC';
+    sql += ' ORDER BY tasks.created_at DESC';
     const rows = db.prepare(sql).all(...params) as TaskRow[];
     return rows as Task[];
+  }
+
+  getTaskByIdForUser(userId: number, id: number): Task | null {
+    const sql = `
+      SELECT tasks.*
+      FROM tasks
+      JOIN task_lists ON task_lists.id = tasks.list_id
+      WHERE tasks.id = ? AND task_lists.user_id = ?
+    `;
+    const row = db.prepare(sql).get(id, userId) as TaskRow | undefined;
+    return row ? (row as Task) : null;
   }
 
   getTaskById(id: number): Task | null {

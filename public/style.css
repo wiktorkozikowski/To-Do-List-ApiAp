@@ -30,6 +30,17 @@ h1 {
     font-weight: 700;
 }
 
+.home-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.home-header h1 {
+    margin-bottom: 0;
+}
+
 .plan-header {
     display: flex;
     justify-content: space-between;
@@ -88,6 +99,15 @@ button:hover {
 
 .cancel-btn:hover { background: #ffb300; }
 
+.logout-btn {
+    background: #4a4a4f;
+    color: #e0e0e0;
+}
+
+.logout-btn:hover {
+    background: #5a5a60;
+}
+
 /* Formularze */
 .create-section {
     display: flex;
@@ -114,7 +134,7 @@ button:hover {
     gap: 10px;
 }
 
-input[type="text"], input[type="date"], input[type="number"] {
+input[type="text"], input[type="date"], input[type="number"], input[type="email"], input[type="password"] {
     background: #1e1e1e;
     border: 2px solid #3e3e42;
     color: #e0e0e0;
@@ -123,7 +143,7 @@ input[type="text"], input[type="date"], input[type="number"] {
     transition: border-color 0.3s;
 }
 
-input[type="text"] {
+input[type="text"], input[type="email"], input[type="password"] {
     flex: 1;
     padding: 14px 18px;
     font-size: 1rem;
@@ -134,7 +154,7 @@ input[type="date"], input[type="number"] {
     font-size: 0.95rem;
 }
 
-input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus {
+input[type="text"]:focus, input[type="date"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="password"]:focus {
     border-color: #667eea;
 }
 
@@ -144,7 +164,7 @@ input[type="number"]::-webkit-inner-spin-button {
     margin: 0;
 }
 
-input[type="number"] { -moz-appearance: textfield; }
+input[type="number"] { -moz-appearance: textfield; }        
 
 /* Listy i karty */
 .plans-list, .tasks-list {
@@ -303,6 +323,39 @@ input[type="number"] { -moz-appearance: textfield; }
     flex-wrap: wrap;
     color: #bdbdbd;
     font-size: 0.85rem;
+}
+
+/* Auth view */
+.auth-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.auth-section h2 {
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.auth-section label {
+    color: #bdbdbd;
+    font-size: 0.95rem;
+}
+
+.auth-links {
+    text-align: center;
+    margin-top: 12px;
+}
+
+.auth-links a {
+    color: #9aa8ff;
+    text-decoration: none;
+}
+
+.auth-links a:hover {
+    text-decoration: underline;
 }
 
 /* Media queries */
